@@ -30,18 +30,22 @@ module.exports = config;
 config.auth_plugins = [];
 //-----------------------------
 config.host = "localhost";
-config.port = 10000;
+config.port = 8080;
 
 //Authentication plugins
-
+/*
 config.auth_plugins.push({
 	name:			"noauth",
 	file:			"noauth.js"
 });
+*/
 config.auth_plugins.push({
 	name:			"admin",
 	file:			"admin.js"
 });
+
+//Do not remove the following plugins
+//--------------------------------------
 config.auth_plugins.push({
 	name:			"wrapper",
 	file:			"wrapper.js"
@@ -51,10 +55,10 @@ config.auth_plugins.push({
 	file:			"modern_lab.js"
 });
 
-
-//verbose
-//Output console debug messages
-config.verbose 			= true;
+//Additional options
+//--------------------------------------
+//verbose - output console debug messages
+config.verbose 			= false;
 
 //Spam console with all details
 config.debug 			= false;
