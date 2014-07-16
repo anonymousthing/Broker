@@ -58,7 +58,7 @@ config.auth_plugins.push({
 //Additional options
 //-----------------------------
 //verbose - output console debug messages
-config.verbose 			= true;
+config.verbose 			= false;
 
 //Spam console with all details
 config.debug 			= false;
