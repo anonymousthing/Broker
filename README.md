@@ -3,6 +3,8 @@ Broker
 
 A broker server for the nodejs implementation of the iLab Shared Architecture
 
+For more information, please see the [instruction manual](http://www.samuco.net/ilab/manual.pdf)
+
 ###Purpose
 The new service broker provides a vastly different service from the original MIT broker. All student interaction, such as authentication and client software, has been moved into a separate service (see [Agent](https://github.com/ShadovvMoon/Agent)). The new purpose of a service broker is to bridge communication between JSON and SOAP (for legacy MIT batched lab servers). 
 
