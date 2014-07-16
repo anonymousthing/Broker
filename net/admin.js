@@ -131,6 +131,52 @@ root_module.create = function (app, server, passport) {
     setupEJSPage(app, 'edit_agent', 'edit_agent.ejs');
     setupEJSPage(app, 'logs', 'logs.ejs');
     setupEJSPage(app, 'profile', 'profile.ejs');
+    setupEJSPage(app, 'about', 'about.ejs');
+
+    /**
+     * PROFILE UI
+     * Display the interface used to modify global settings (like lab name etc)
+     */
+	app.post('/profile', function(req,res)
+	{
+        if (user_authenticated(req,res))
+		{
+			var form_post = req.body;
+			var oldpass = form_post['old'];
+			var newpass = form_post['new'];
+			var verifyp = form_post['verify'];
+
+			var salt = database.valueForKey("settings", "server-salt", undefined);
+			var shasum = crypto.createHash('sha1'); shasum.update(salt); shasum.update(oldpass);
+			var d = shasum.digest('hex');
+			if (req.user.hash == d)
+			{
+				if (newpass == verifyp)
+				{
+	                //Update the password file
+	                shasum = crypto.createHash('sha1');
+	                shasum.update(salt);
+	                shasum.update(newpass);
+	                d = shasum.digest('hex');
+	
+	                var user_settings = database.valueForKey("users", req.user.username, undefined);
+	                user_settings['hash'] = d;
+	                database.setValueForKey("users", req.user.username, user_settings, undefined);
+	
+	                req.user.hash = d;
+	                return res.redirect('/profile?success=1');
+				}
+				else
+				{
+					return res.redirect('/profile?success=0&e=Verify%20password%20does%20not%20match');
+				}
+			}
+			else
+			{
+				return res.redirect('/profile?success=0&e=Old%20password%20does%20not%20match');
+			}
+		}
+	});
 
     /**
      * SETTINGS UI
