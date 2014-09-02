@@ -283,7 +283,7 @@ function start() {
         console.log("");
         console.log("iLab Broker Service");
         console.log("Version: 1.0.4");
-        console.log("  Build: 1");
+        console.log("  Build: 2");
         console.log("   Date: 2/9/2014");
         console.log("");
         console.log("Port: " + config.port);
