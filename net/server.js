@@ -831,10 +831,11 @@ function start() {
 		                                                    //Associate this experiment with the wrapper (IF a wrapper was used)
 		                                                    if (wrapper_uid != null) {
 																var lab_guid = database.valueForKey("servers", server_id)['guid'];
-	
-		                                                       	console.log("Associating experiment " + returnedID + " for lab " + lab_guid + " with agent " + wrapper_uid);
-		                                                        experiment_store.set(lab_guid, JSON.stringify(returnedID), wrapper_uid);
-		
+																if (typeof lab_guid !== 'undefined' && lab_guid != null) {
+		                                                       		console.log("Associating experiment " + returnedID + " for lab " + lab_guid + " with agent " + wrapper_uid);
+		                                                        	experiment_store.set(lab_guid, JSON.stringify(returnedID), wrapper_uid);
+																}
+
 		                                                        //Flush the experiment store (to ensure all changes are kept!)
 		                                                        experiment_store.flush();
 																console.log("Experiment store saved.");
