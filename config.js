@@ -39,13 +39,13 @@ config.auth_plugins.push({
 	file:			"noauth.js"
 });
 */
+
+//Do not remove the following plugins
+//--------------------------------------
 config.auth_plugins.push({
 	name:			"admin",
 	file:			"admin.js"
 });
-
-//Do not remove the following plugins
-//--------------------------------------
 config.auth_plugins.push({
 	name:			"wrapper",
 	file:			"wrapper.js"
