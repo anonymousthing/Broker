@@ -282,9 +282,9 @@ function start() {
         //-------------------------------
         console.log("");
         console.log("iLab Broker Service");
-        console.log("Version: 1.0.3");
-        console.log("  Build: 3");
-        console.log("   Date: 16/7/2014");
+        console.log("Version: 1.0.4");
+        console.log("  Build: 1");
+        console.log("   Date: 2/9/2014");
         console.log("");
         console.log("Port: " + config.port);
         _timeProfile("Setting up express");
