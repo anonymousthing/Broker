@@ -35,6 +35,7 @@ express = require('express');
 path = require('path');
 fs = require('fs');
 database = require('./database');
+mqtt_connector = require('./mqtt_connector');
 
 var app = express();
 var plugin_list = {};
@@ -288,6 +289,11 @@ function start() {
         console.log("");
         console.log("Port: " + config.port);
         _timeProfile("Setting up express");
+		
+        //MQTT server setup
+        //-------------------------------
+        mqtt_connector.setup(config.mqtt_location);
+        console.log("Connected to MQTT server at " + config.mqtt_location)
 
         /**
          * Configure the express module
@@ -556,8 +562,10 @@ function start() {
 			var json = client.json;
 			if (json.action == "notify")
 			{
-				var experimentId = json['experimentId'];
-				console.log("Experiment " + experimentId + " for lab " + lab_id + " finished");
+                var experimentId = json['experimentId'];
+                var finishedMessage = "Experiment " + experimentId + " for lab " + lab_id + " finished";
+                mqtt_connector.publishMessage(mqtt_topic, finishedMessage);
+				console.log(finishedMessage);
 
 				var localised_lab_identifier = undefined;
 				var keys = database.getKeys("servers");
@@ -785,6 +793,7 @@ function start() {
                             break;
                         case "cancel":
                             selected_server.cancel(json['experimentID'], response_client);
+                            mqtt_connector.publishMessage("Experiment " + json['experimentID'] + " for server " + server_id + " cancelled.");
                             break;
                         case "getExperimentStatus":
                             selected_server.getExperimentStatus(json['experimentID'], responseFunction);
@@ -806,6 +815,7 @@ function start() {
                                         //Log this message
                                         if (config.verbose) console.log("Submitting experiment to " + json['id']);
                                         if (config.verbose) console.log(json['experimentSpecification']);
+                                        mqtt_connector.publishMessage(config.mqtt_topic, "Submitting experiment to " + json['id'] + "\nSpecification: " + json['experimentSpecification']);
 
                                         var submitFunction = (function (lab_id, wrapper_uid, response_client) {
                                             return function (obj, err) {

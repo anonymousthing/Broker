@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2013, Samuel Colbran <contact@samuco.net>
+ * Copyright (c) 2014, Declan Vong <declan.vong@uqconnect.edu.au>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- 
+
  * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- 
+
  * Redistributions in binary form must reproduce the above copyright notice, this
  * list of conditions and the following disclaimer in the documentation and/or
  * other materials provided with the distribution.
- 
+
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,56 +24,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var mqtt = require('mqtt');
+var mqtt_module = module.exports;
 
-var config = {}
-module.exports = config;
-config.auth_plugins = [];
-//-----------------------------
-config.host = "localhost";
-config.port = 8080;
+mqtt_module.setup = function(address) {
+	mqtt_module.client = mqtt.connect(address);
+    mqtt_module.connected = true;
+    console.log("mqtt module initialised");
+};
 
-//Authentication plugins
-/*
-config.auth_plugins.push({
-	name:			"noauth",
-	file:			"noauth.js"
-});
-*/
+mqtt_module.publishMessage = function(topic, message) {
+    if (mqtt_module.connected) {
+        console.log("publishing message to topic " + topic);
+		mqtt_module.client.publish(topic, message);
+	}
+};
 
-//Do not remove the following plugins
-//--------------------------------------
-config.auth_plugins.push({
-	name:			"admin",
-	file:			"admin.js"
-});
-config.auth_plugins.push({
-	name:			"wrapper",
-	file:			"wrapper.js"
-});
-config.auth_plugins.push({
-	name:			"modern_lab",
-	file:			"modern_lab.js"
-});
+mqtt_module.dispose = function() {
+	mqtt_module.client.end();
+};
 
-//Additional options
-//--------------------------------------
-//verbose - output console debug messages
-config.verbose 			= false;
-
-//Spam console with all details
-config.debug 			= false;
-
-//Show express requests
-config.show_requests 	= false;
-
-//Load the servers in order (instead of all at once)
-config.flush_ordered 	= false;
-
-//Show time statistics
-config.show_performance = false;
-
-//URI of MQTT server
-config.mqtt_location = "mqtt://winter.ceit.uq.edu.au";
-
-//MQTT push topic
-config.mqtt_topic = "test";
