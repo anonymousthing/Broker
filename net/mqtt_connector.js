@@ -30,7 +30,7 @@ var mqtt_module = module.exports;
 mqtt_module.setup = function(address) {
 	mqtt_module.client = mqtt.connect(address);
     mqtt_module.connected = true;
-    console.log("mqtt module initialised");
+    console.log("MQTT module initialised");
 };
 
 mqtt_module.publishMessage = function(topic, message) {
