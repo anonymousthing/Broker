@@ -71,9 +71,3 @@ config.flush_ordered 	= false;
 
 //Show time statistics
 config.show_performance = false;
-
-//URI of MQTT server
-config.mqtt_location = "mqtt://winter.ceit.uq.edu.au";
-
-//MQTT push topic
-config.mqtt_topic = "test";

@@ -202,6 +202,10 @@ root._loadServer = function(server_number) {
     }(server_id, advanced_log_file));
 };
 
+function setupMqtt(address) {
+    mqtt_connector.setup(address);
+}
+
 /**
  * Reload all lab server objects from the database.
  */
@@ -289,12 +293,7 @@ function start() {
         console.log("");
         console.log("Port: " + config.port);
         _timeProfile("Setting up express");
-		
-        //MQTT server setup
-        //-------------------------------
-        mqtt_connector.setup(config.mqtt_location);
-        console.log("Connected to MQTT server at " + config.mqtt_location)
-
+        
         /**
          * Configure the express module
          * @type {*}
@@ -377,6 +376,12 @@ function start() {
             database.setValueForKey("settings", "vendor-name", 'Default name', undefined);
         if (database.getKeys("settings").indexOf("broker-port") == -1)
             database.setValueForKey("settings", "broker-port", 8080, undefined);
+        if (database.getKeys("settings").indexOf("mqtt-location") == -1)
+            database.setValueForKey("settings", "mqtt-location", '', undefined);
+        if (database.getKeys("settings").indexOf("mqtt-topic") == -1)
+            database.setValueForKey("settings", "mqtt-topic", "", undefined);
+        if (database.getKeys("settings").indexOf("mqtt-enabled") == -1)
+            database.setValueForKey("settings", "mqtt-enabled", 0, undefined);
 
         adminui.create(app, root, passport);
         _timeProfile("Loading plugins");
@@ -564,7 +569,7 @@ function start() {
 			{
                 var experimentId = json['experimentId'];
                 var finishedMessage = "Experiment " + experimentId + " for lab " + lab_id + " finished";
-                mqtt_connector.publishMessage(mqtt_topic, finishedMessage);
+                mqtt_connector.publishMessage(database.getKeys("settings").indexOf("mqtt-topic"), finishedMessage);
 				console.log(finishedMessage);
 
 				var localised_lab_identifier = undefined;
@@ -815,7 +820,8 @@ function start() {
                                         //Log this message
                                         if (config.verbose) console.log("Submitting experiment to " + json['id']);
                                         if (config.verbose) console.log(json['experimentSpecification']);
-                                        mqtt_connector.publishMessage(config.mqtt_topic, "Submitting experiment to " + json['id'] + "\nSpecification: " + json['experimentSpecification']);
+                                        if (database.valueForKey("settings", "mqtt-enabled") == 1)
+                                            mqtt_connector.publishMessage(database.valueForKey("settings", "mqtt-topic"), "Submitting experiment to " + json['id'] + "\nSpecification: " + json['experimentSpecification']);
 
                                         var submitFunction = (function (lab_id, wrapper_uid, response_client) {
                                             return function (obj, err) {
@@ -891,6 +897,19 @@ function start() {
             }
             _timeProfile("Action completed");
         }
+        
+        //MQTT server setup
+        //-------------------------------
+        var mqtt_loc = database.valueForKey("settings", "mqtt-location");
+        var mqtt_top = database.valueForKey("settings", "mqtt-topic");
+        var mqtt_enabled = database.valueForKey("settings", "mqtt-enabled");
+
+        if (mqtt_enabled == 1 && mqtt_loc != ""  && mqtt_top != "") {
+            mqtt_connector.setup(mqtt_loc);
+            console.log("Connected to MQTT server at " + mqtt_loc);
+        } else {
+            console.log("MQTT server is either unconfigured or not enabled");
+        }
 
         //Server creation
         //-------------------------------
@@ -908,6 +927,7 @@ function start() {
 		root.receiveDataFromLabServer = receiveDataFromLabServer;
         root.receiveDataFromClient = receiveDataFromClient;
         root.sendReplyToClient = sendReplyToClient;
+        root.setupMqtt = setupMqtt;
         root.flushServers = flushServers;
 
         _timeProfile("Setup complete!");

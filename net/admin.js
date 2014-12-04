@@ -122,6 +122,7 @@ root_module.create = function (app, server, passport) {
     //Setup EJS values
     setupEJSPage(app, 'general', 'general.ejs');
     setupEJSPage(app, 'labs', 'labs.ejs');
+    setupEJSPage(app, 'mqtt', 'mqtt.ejs');
 
     setupEJSPage(app, 'legacy', 'legacy.ejs');
     setupEJSPage(app, 'legacy_debug', 'legacy_debug.ejs');
@@ -195,6 +196,23 @@ root_module.create = function (app, server, passport) {
 
             server.flushServers();
             return res.redirect('/general');
+        }
+    });
+    
+    app.post('/mqtt', function (req, res) {
+        if (user_authenticated(req, res)) {
+            var form_post = req.body;
+            var new_location = form_post['location'];
+            var new_topic = form_post['topic'];
+            var enabled = form_post['enabled'] == "on" ? 1 : 0;
+            
+            database.setValueForKey("settings", "mqtt-enabled", enabled, undefined);            
+            database.setValueForKey("settings", "mqtt-location", new_location, undefined);
+            database.setValueForKey("settings", "mqtt-topic", new_topic, undefined);
+            
+            server.setupMqtt(new_location);
+            server.flushServers();
+            return res.redirect('/mqtt');
         }
     });
 

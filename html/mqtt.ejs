@@ -1,0 +1,36 @@
+﻿<%- include title.ejs %>
+Service Broker - MQTT config
+<%- include header.ejs %>
+<h4>MQTT configuration</h4>
+<hr>
+<% 
+var location = database.valueForKey("settings", "mqtt-location"); 
+var topic    = database.valueForKey("settings", "mqtt-topic"); 
+var is_checked  = database.valueForKey("settings", "mqtt-enabled") ? "checked" : "";
+%>
+
+<form role="form" action="/mqtt" method="post">
+	<td align="right" style="width:30px">
+		<input type="checkbox" name="enabled" <%= is_checked %>></input>
+	</td>
+	<td>
+		Enabled
+	</td>
+
+	<div class="form-group">
+		<label>Location</label>
+		<input class="form-control" name="location" id="mqtt-location" value="<%= location %>">
+	</div>
+
+	<div class="form-group">
+		<label>Topic</label>
+		<input class="form-control" name="topic" id="mqtt-topic" value="<%= topic %>">
+	</div>
+
+	<div align="right">
+		<a href="mqtt" class="btn btn-danger" style="width:86px">Revert</a>
+		<button type="submit" class="btn btn-primary" style="width:86px">Save</button>
+	</div>
+</form>
+
+<%- include footer.ejs %>
