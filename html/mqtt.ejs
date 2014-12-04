@@ -10,13 +10,8 @@ var is_checked  = database.valueForKey("settings", "mqtt-enabled") ? "checked" :
 %>
 
 <form role="form" action="/mqtt" method="post">
-	<td align="right" style="width:30px">
-		<input type="checkbox" name="enabled" <%= is_checked %>></input>
-	</td>
-	<td>
-		Enabled
-	</td>
-
+	<input type="checkbox" name="enabled" <%= is_checked %> style="padding:20px"> Enabled</input>		
+	<br><br>
 	<div class="form-group">
 		<label>Location</label>
 		<input class="form-control" name="location" id="mqtt-location" value="<%= location %>">
