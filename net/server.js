@@ -821,7 +821,7 @@ function start() {
                                         if (config.verbose) console.log("Submitting experiment to " + json['id']);
                                         if (config.verbose) console.log(json['experimentSpecification']);
                                         if (database.valueForKey("settings", "mqtt-enabled") == 1)
-                                            mqtt_connector.publishMessage(database.valueForKey("settings", "mqtt-topic"), "Submitting experiment to " + json['id'] + "\nSpecification: " + json['experimentSpecification']);
+                                            mqtt_connector.publishMessage(database.valueForKey("settings", "mqtt-topic"), "Submitting experiment to " + json['id'] + "\nSpecification: " + json['experimentSpecification'] + "\nFrom address: " + json['remoteAddress']);
 
                                         var submitFunction = (function (lab_id, wrapper_uid, response_client) {
                                             return function (obj, err) {
